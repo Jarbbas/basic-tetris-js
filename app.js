@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //this function draws tretomino
 // uses the foreach array loop adding the css trough the "classList" method to each var "square"(divs)
-    function draw() {
+    function draw () {
       current.forEach(index => {
         squares[curentPostion + index].classList.add('tetromino')
       })
@@ -68,11 +68,33 @@ document.addEventListener('DOMContentLoaded', () => {
     draw()
 
     //same as draw but bt removing the css class it simulates an tetromino movement
-    function undraw() {
+    function undraw () {
       current.forEach(index => {
         squares[curentPostion + index].classList.remove('tetromino')
       })
     }
 
+    //function that makes tetromino move down 1 second
+    timerId = setInterval(moveDown, 1000)
+
+    //moveDown function
+
+    function moveDown () {
+      undraw()
+      curentPostion += width
+      draw()
+      freeze()
+    }
+
+    function freeze () {
+      if (current.some(index => squares[curentPostion + index + width].classList.contains('taken'))) {
+            current.forEach(index => squares[curentPostion + index].classList.add('taken'))
+        //start a new tretromino
+         random = Math.floor(Math.random() * theTetrominos.length)
+         current = theTetrominos[random][curentRotation]
+         curentPostion = 4
+         draw()
+        }
+      }
 
 })
