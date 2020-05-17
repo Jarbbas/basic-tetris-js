@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     //Math floor to round down to the near integer value and Math random to get random numbers
     // based on multiplication of the size of Array "theTetrominos" size
     let random = Math.floor(Math.random() * theTetrominos.length)
+    console.log('tetrominos length array' + ' ' + theTetrominos.length)
     console.log('random' + ' ' + random)
-
 
     let currentPosition = 4
     let currentRotation = 0
@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if(e.keyCode === 37) {
       moveLeft()
     } else if (e.keyCode === 38) {
-      // rotate()
+      rotate()
     } else if (e.keyCode === 39) {
       moveRight()
     } else if (e.keyCode === 40) {
-      // moveDown()
+      moveDown()
     }
   }
     document.addEventListener('keyup', control)
@@ -97,12 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // freeze function
     function freeze () {
+      //The some() method tests whether at least one element in the array "curent" returns true if the div right below has the class of taken
+      //if true adds the class taken and starts a new tetromino from the top in using random value to mix things ups it's an extra
       if (current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
           current.forEach(index => squares[currentPosition + index].classList.add('taken'))
         //start a new tretromino
          random = Math.floor(Math.random() * theTetrominos.length)
          current = theTetrominos[random][currentRotation]
-         currentPosition = 4
+         currentPosition = random
          draw()
         }
       }
@@ -111,6 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
       //unlesh is at the edge or there is a blocker
       function moveLeft () {
         undraw()
+        /*isAtLeftEdge will use some() method to validate it bolean value, if the currentPosition plus its index value of
+        his modulus operation results in zero, means it has reach the left side of div collection
+        because we */
         const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0)
         if (!isAtLeftEdge) {
             currentPosition -=1
@@ -131,6 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition -=1
         }
+        draw()
+      }
+
+      function rotate () {
+        undraw()
+        currentRotation++
+        //if the current rotation get to 4, currentRotation goes all the way back to zero
+        if (currentRotation === current.length) {
+          currentRotation = 0
+        }
+        current = theTetrominos[random][currentRotation]
         draw()
       }
 
