@@ -41,60 +41,97 @@ document.addEventListener('DOMContentLoaded', () => {
       [width,width+1,width+2,width+3]
     ]
 
-    const theTetrominos = [lTetromino, zTetromino, tTetromino, oTetromino,iTetromino]
+    const theTetrominos = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
 
     //this random variable uses 2 math js embended methods
     //Math floor to round down to the near integer value and Math random to get random numbers
     // based on multiplication of the size of Array "theTetrominos" size
-    let random = Math.floor(Math.random()*theTetrominos.length)
-    console.log(random)
+    let random = Math.floor(Math.random() * theTetrominos.length)
+    console.log('random' + ' ' + random)
 
 
-    let curentPostion = 4
-    let curentRotation = 0
+    let currentPosition = 4
+    let currentRotation = 0
 
-    let current = theTetrominos[random][curentRotation]
-    console.log(current)
+    let current = theTetrominos[random][currentRotation]
+    console.log('current' + ' ' + current)
 
 //this function draws tretomino
 // uses the foreach array loop adding the css trough the "classList" method to each var "square"(divs)
     function draw () {
       current.forEach(index => {
-        squares[curentPostion + index].classList.add('tetromino')
+        squares[currentPosition + index].classList.add('tetromino')
       })
     }
-
-    //calls function to draw the tretomino
-    draw()
 
     //same as draw but bt removing the css class it simulates an tetromino movement
     function undraw () {
       current.forEach(index => {
-        squares[curentPostion + index].classList.remove('tetromino')
+        squares[currentPosition + index].classList.remove('tetromino')
       })
     }
 
     //function that makes tetromino move down 1 second
     timerId = setInterval(moveDown, 1000)
 
-    //moveDown function
+    function control(e) {
+    if(e.keyCode === 37) {
+      moveLeft()
+    } else if (e.keyCode === 38) {
+      // rotate()
+    } else if (e.keyCode === 39) {
+      moveRight()
+    } else if (e.keyCode === 40) {
+      // moveDown()
+    }
+  }
+    document.addEventListener('keyup', control)
 
+    //moveDown function
     function moveDown () {
       undraw()
-      curentPostion += width
+      currentPosition += width
       draw()
       freeze()
     }
 
+    // freeze function
     function freeze () {
-      if (current.some(index => squares[curentPostion + index + width].classList.contains('taken'))) {
-            current.forEach(index => squares[curentPostion + index].classList.add('taken'))
+      if (current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
+          current.forEach(index => squares[currentPosition + index].classList.add('taken'))
         //start a new tretromino
          random = Math.floor(Math.random() * theTetrominos.length)
-         current = theTetrominos[random][curentRotation]
-         curentPostion = 4
+         current = theTetrominos[random][currentRotation]
+         currentPosition = 4
          draw()
         }
+      }
+
+      //functions to move tetrominos to the left & right side of the screen
+      //unlesh is at the edge or there is a blocker
+      function moveLeft () {
+        undraw()
+        const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0)
+        if (!isAtLeftEdge) {
+            currentPosition -=1
+        }
+        if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            currentPosition +=1
+        }
+        draw()
+      }
+
+      function moveRight () {
+        undraw()
+        const isAtRightEdge = current.some(index => (currentPosition + index) % width === width -1)
+
+        if (!isAtRightEdge) {
+          currentPosition +=1
+        }
+        if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            currentPosition -=1
+        }
+        draw()
       }
 
 })
